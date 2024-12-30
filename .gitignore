@@ -1,0 +1,87 @@
+# Environment variables and secrets
+.env
+*.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+.jupyter/
+jupyter_notebook_config.py
+
+# ML specific
+models/
+*.h5
+*.pkl
+*.pth
+*.onnx
+*.mlmodel
+tensorboard/
+runs/
+wandb/
+logs/
+checkpoints/
+
+# BERT specific
+bert_model/
+tokenizer/
+*.bin
+*.pt
+cached_*
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+.conda/
+*.venv
+.python-version
+
+# IDE specific
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Large files
+*.csv
+*.json
+*.jsonl
+*.txt
+*.tsv
+00_data/
+raw/
+processed/
+interim/
+
+# Logs
+*.log
+*.out
+logs/
