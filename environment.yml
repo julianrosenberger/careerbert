@@ -24,3 +24,6 @@ dependencies:
     - sentence-transformers
     - torch
     - pypdf
+    - openai
+    - anthropic
+    - python-dotenv
