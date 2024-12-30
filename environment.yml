@@ -1,0 +1,26 @@
+name: careerbert
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - jupyter
+  - jupyterlab
+  - numpy
+  - pandas
+  - pip
+  - srsly
+  - tqdm
+  - datasets
+  - nltk
+  - matplotlib
+  - pytorch
+  - ipython
+  - openpyxl
+  - seaborn
+  - pip:
+    - transformers
+    - scikit-learn
+    - sentence-transformers
+    - torch
+    - pypdf
