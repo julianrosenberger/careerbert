@@ -27,3 +27,5 @@ dependencies:
     - openai
     - anthropic
     - python-dotenv
+    - transformers[torch]
+    - accelerate
