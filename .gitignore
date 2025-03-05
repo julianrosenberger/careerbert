@@ -44,6 +44,7 @@ runs/
 wandb/
 logs/
 checkpoints/
+*/model_checkpoints/
 
 # BERT specific
 bert_model/
