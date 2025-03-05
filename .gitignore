@@ -86,3 +86,4 @@ interim/
 *.log
 *.out
 logs/
+*/model_checkpoints/
