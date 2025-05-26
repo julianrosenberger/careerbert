@@ -7,7 +7,7 @@ import pickle
 def write_unique_json(filename,data):
     unique = False
     i = 0
-    while unique == False:
+    while not unique:
         checkfilename = filename+"_"+str(i)+".json"
         if Path(checkfilename).is_file():
             i += 1

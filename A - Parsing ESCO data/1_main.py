@@ -5,7 +5,7 @@ from helpers import write_unique_json
 def get_all_jobs():
 
     url = "https://ec.europa.eu/esco/api/resource/taxonomy?uri=http://data.europa.eu/esco/concept-scheme/occupations&language=de&selectedVersion=v1.1.0"
-    r = requests.get(url)
+    r = requests.get(url, timeout=20)
     data = r.json()
     topleveluris = []
 
@@ -23,6 +23,7 @@ def get_all_jobs():
             continue
         queue = [TLuri["uri"]]
         while queue:
+            print(len(queue), TLuri["title"])
             uri = queue.pop(0)
             #visitedlevels.append(uri)
             r = requests.get(f"https://ec.europa.eu/esco/api/resource/occupation?uri={uri}&language=de&selectedVersion=v1.1.0")
