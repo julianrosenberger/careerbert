@@ -205,23 +205,6 @@ def main():
     print(f"Same ESCO Similarities: mean={dist_stats['same_esco_mean']:.3f} ± {dist_stats['same_esco_std']:.3f}")
     print(f"Different ESCO Similarities: mean={dist_stats['diff_esco_mean']:.3f} ± {dist_stats['diff_esco_std']:.3f}")
     
-    # Save results
-    print("\n3. Saving results...")
-    
-    # Save CV-job matches
-    results_df.to_json('cv_job_matches.json', orient='records', indent=2)
-    print("CV-job matches saved to: cv_job_matches.json")
-    
-    # Save similarity statistics
-    with open('similarity_stats.json', 'w') as f:
-        json.dump({**stats, **dist_stats}, f, indent=2)
-    print("Similarity statistics saved to: similarity_stats.json")
-    
-    # Save distribution data for visualization
-    with open('similarity_distributions.json', 'w') as f:
-        json.dump(distributions, f, indent=2)
-    print("Distribution data saved to: similarity_distributions.json")
-    
     print("\nAnalysis completed successfully!")
 
 if __name__ == "__main__":
