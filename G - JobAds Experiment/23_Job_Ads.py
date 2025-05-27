@@ -6,7 +6,13 @@ from pypdf import PdfReader
 import json
 from helpers import *
 
+# Load configuration and datasets
+config = Config()
+datasets = load_standard_datasets()
+testads = datasets["testads"]
+
 def load_single_cv(filepath):
+    """Load and extract text from a single CV PDF file"""
     cv = ""
     reader = PdfReader(filepath)
     pages = reader.pages
@@ -15,22 +21,36 @@ def load_single_cv(filepath):
         cv += page
     return cv
 
-def analyze_cross_similarities():
-    # Load model and data
-    model = SentenceTransformer("../00_data/SBERT_Models/models/jobgbert_batch32_woTSDAE_2e-05_f10/")
-    testads = pd.DataFrame(load_json("../00_data/EURES/eures_testads_final_short.json"))
-    
-    # Load CVs
+def load_cvs(cv_directory="../00_data/CVs/", cv_count=5):
+    """Load multiple CVs with error handling"""
     cvs = []
     cv_texts = []
-    for i in range(1, 6):  # Loading the 5 CVs used in evaluation
-        filepath = f"../00_data/CVs/CV_{i}.pdf"
-        cv_text = load_single_cv(filepath)
-        cvs.append({
-            'id': f'CV_{i}',
-            'text': cv_text
-        })
-        cv_texts.append(cv_text)
+    
+    for i in range(1, cv_count + 1):
+        filepath = f"{cv_directory}CV_{i}.pdf"
+        try:
+            cv_text = load_single_cv(filepath)
+            cvs.append({'id': f'CV_{i}', 'text': cv_text})
+            cv_texts.append(cv_text)
+            print(f"Successfully loaded {filepath}")
+        except Exception as e:
+            print(f"Warning: Could not load {filepath}: {e}")
+    
+    return cvs, cv_texts
+
+def load_analysis_model():
+    """Load the model for CV-job analysis"""
+    model_path = f"{config.MODELS_BASE}/jobgbert_batch32_woTSDAE_2e-05_f10/"
+    print(f"Loading model from: {model_path}")
+    return SentenceTransformer(model_path)
+
+def analyze_cross_similarities():
+    """Analyze similarities between CVs and job ads"""
+    # Load model
+    model = load_analysis_model()
+    
+    # Load CVs
+    cvs, cv_texts = load_cvs()
     
     # Create embeddings for both job ads and CVs
     print("Creating embeddings...")
@@ -55,7 +75,7 @@ def analyze_cross_similarities():
             'cv_text': cvs[i]['text'][:200] + "...",  # First 200 chars
             'similar_jobs': [{
                 'esco_id': testads.iloc[idx]['esco_id'],
-                'similarity': sim_scores[idx],
+                'similarity': float(sim_scores[idx]),
                 'text': testads.iloc[idx]['short_texts'][:200] + "..."
             } for idx in top_indices]
         })
@@ -85,35 +105,13 @@ def analyze_cross_similarities():
     
     return pd.DataFrame(results), similarity_stats
 
-# Run analysis
-results_df, stats = analyze_cross_similarities()
-
-# Print summary statistics
-print("\nSimilarity Statistics:")
-print(f"Average similarity between jobs with same ESCO ID: {stats['avg_same_esco_sim']:.3f}")
-print(f"Average similarity between jobs with different ESCO ID: {stats['avg_diff_esco_sim']:.3f}")
-print(f"Average CV-Job similarity: {stats['cv_job_avg_sim']:.3f}")
-print(f"Maximum CV-Job similarity: {stats['cv_job_max_sim']:.3f}")
-
-# Display example matches
-print("\nExample CV-Job Matches:")
-for _, row in results_df.iterrows():
-    print(f"\nCV {row['cv_id']}:")
-    print(f"Top similar jobs:")
-    for job in row['similar_jobs'][:3]:  # Show top 3 matches
-        print(f"- ESCO ID: {job['esco_id']}, Similarity: {job['similarity']:.3f}")
-
 def calculate_similarity_distributions():
-    # Load model and data
-    model = SentenceTransformer("../00_data/SBERT_Models/models/jobgbert_batch32_woTSDAE_2e-05_f10/")
-    testads = pd.DataFrame(load_json("../00_data/EURES/eures_testads_final_short.json"))
+    """Calculate similarity distributions for visualization"""
+    # Load model
+    model = load_analysis_model()
     
     # Load CVs
-    cv_texts = []
-    for i in range(1, 6):
-        filepath = f"../00_data/CVs/CV_{i}.pdf"
-        cv_text = load_single_cv(filepath)
-        cv_texts.append(cv_text)
+    cvs, cv_texts = load_cvs()
     
     # Create embeddings
     print("Creating embeddings...")
@@ -173,15 +171,58 @@ def calculate_similarity_distributions():
     
     return distribution_data, stats
 
-# Run analysis
-distributions, stats = calculate_similarity_distributions()
+def main():
+    """Main analysis function"""
+    print("Starting CV-Job Analysis...")
+    print("=" * 50)
+    
+    # Run cross-similarity analysis
+    print("\n1. Running cross-similarity analysis...")
+    results_df, stats = analyze_cross_similarities()
+    
+    # Print summary statistics
+    print("\nSimilarity Statistics:")
+    print(f"Average similarity between jobs with same ESCO ID: {stats['avg_same_esco_sim']:.3f}")
+    print(f"Average similarity between jobs with different ESCO ID: {stats['avg_diff_esco_sim']:.3f}")
+    print(f"Average CV-Job similarity: {stats['cv_job_avg_sim']:.3f}")
+    print(f"Maximum CV-Job similarity: {stats['cv_job_max_sim']:.3f}")
+    
+    # Display example matches
+    print("\nExample CV-Job Matches:")
+    for _, row in results_df.iterrows():
+        print(f"\nCV {row['cv_id']}:")
+        print(f"Top similar jobs:")
+        for job in row['similar_jobs'][:3]:  # Show top 3 matches
+            print(f"- ESCO ID: {job['esco_id']}, Similarity: {job['similarity']:.3f}")
+    
+    # Run distribution analysis
+    print("\n2. Calculating similarity distributions...")
+    distributions, dist_stats = calculate_similarity_distributions()
+    
+    print("\nSimilarity Distribution Statistics:")
+    print(f"Job-Job Similarities: mean={dist_stats['job_job_mean']:.3f} ± {dist_stats['job_job_std']:.3f}")
+    print(f"Job-Resume Similarities: mean={dist_stats['cv_job_mean']:.3f} ± {dist_stats['cv_job_std']:.3f}")
+    print(f"Same ESCO Similarities: mean={dist_stats['same_esco_mean']:.3f} ± {dist_stats['same_esco_std']:.3f}")
+    print(f"Different ESCO Similarities: mean={dist_stats['diff_esco_mean']:.3f} ± {dist_stats['diff_esco_std']:.3f}")
+    
+    # Save results
+    print("\n3. Saving results...")
+    
+    # Save CV-job matches
+    results_df.to_json('cv_job_matches.json', orient='records', indent=2)
+    print("CV-job matches saved to: cv_job_matches.json")
+    
+    # Save similarity statistics
+    with open('similarity_stats.json', 'w') as f:
+        json.dump({**stats, **dist_stats}, f, indent=2)
+    print("Similarity statistics saved to: similarity_stats.json")
+    
+    # Save distribution data for visualization
+    with open('similarity_distributions.json', 'w') as f:
+        json.dump(distributions, f, indent=2)
+    print("Distribution data saved to: similarity_distributions.json")
+    
+    print("\nAnalysis completed successfully!")
 
-print("\nSimilarity Distribution Statistics:")
-print(f"Job-Job Similarities: mean={stats['job_job_mean']:.3f} ± {stats['job_job_std']:.3f}")
-print(f"Job-Resume Similarities: mean={stats['cv_job_mean']:.3f} ± {stats['cv_job_std']:.3f}")
-print(f"Same ESCO Similarities: mean={stats['same_esco_mean']:.3f} ± {stats['same_esco_std']:.3f}")
-print(f"Different ESCO Similarities: mean={stats['diff_esco_mean']:.3f} ± {stats['diff_esco_std']:.3f}")
-
-# Save distribution data for visualization
-with open('similarity_distributions.json', 'w') as f:
-    json.dump(distributions, f)
+if __name__ == "__main__":
+    main()
