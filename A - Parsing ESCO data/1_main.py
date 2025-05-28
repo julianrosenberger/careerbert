@@ -3,6 +3,19 @@ from pathlib import Path
 from helpers import write_unique_json
 
 def get_all_jobs():
+    """
+    Retrieves and processes job occupations from the ESCO API.
+    This function fetches all job occupations from the European Skills, Competences, Qualifications and Occupations (ESCO) API.
+    It first retrieves the top 10 levels of the ESCO occupation hierarchy, then iteratively traverses down the hierarchy
+    to collect all job titles and their URIs. The results are saved in JSON files, with one file for each top level category.
+    If a JSON file for a top level already exists, that top level is skipped to avoid redundant processing.
+    Returns:
+        None: Results are written directly to JSON files.
+    Note:
+        - Requires the 'requests' library for API calls
+        - Requires the 'Path' class from the 'pathlib' module
+        - Depends on an external 'write_unique_json' function to save results
+    """
 
     url = "https://ec.europa.eu/esco/api/resource/taxonomy?uri=http://data.europa.eu/esco/concept-scheme/occupations&language=de&selectedVersion=v1.1.0"
     r = requests.get(url, timeout=20)
