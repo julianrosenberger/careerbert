@@ -34,7 +34,7 @@ The system's development involved:
 
 ## Access Models & Code
 
-* **Source Code**: The complete source code for experiments and models is available in this repositor [(https://github.com/julianrosenberger/careerbert)](https://github.com/julianrosenberger/careerbert).
+* **Source Code**: The complete source code for experiments and models is available in this repository [(https://github.com/julianrosenberger/careerbert)](https://github.com/julianrosenberger/careerbert).
 * **Pre-trained Models**:
     * `careerbert-jg` (jobGBERT base): [https://huggingface.co/lwolfrum2/careerbert-jg](https://huggingface.co/lwolfrum2/careerbert-jg)
     * `careerbert-g` (GBERT base): [https://huggingface.co/lwolfrum2/careerbert-g](https://huggingface.co/lwolfrum2/careerbert-g)
