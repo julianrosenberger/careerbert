@@ -58,7 +58,7 @@ An example of a Streamlit application interface demonstrating CareerBERT's usage
 If you use CareerBERT or insights from our paper in your research, please cite:
 
 ```bibtex
-@article{Rosenberger2025CareerBERT,
+@article{rosenberger2025careerbert,
   title = {CareerBERT: Matching resumes to ESCO jobs in a shared embedding space for generic job recommendations},
   author = {Julian Rosenberger and Lukas Wolfrum and Sven Weinzierl and Mathias Kraus and Patrick Zschech},
   journal = {Expert Systems With Applications},
