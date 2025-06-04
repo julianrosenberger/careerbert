@@ -68,3 +68,15 @@ If you use CareerBERT or insights from our paper in your research, please cite:
   doi = {[https://doi.org/10.1016/j.eswa.2025.127043](https://doi.org/10.1016/j.eswa.2025.127043)},
   issn = {0957-4174}
 }
+
+## Authors
+
+* Julian Rosenberger (Universität Regensburg)
+* Lukas Wolfrum (Friedrich-Alexander-Universität Erlangen-Nürnberg)
+* Sven Weinzierl (Friedrich-Alexander-Universität Erlangen-Nürnberg)
+* Mathias Kraus (Universität Regensburg)
+* Patrick Zschech (TU Dresden)
+
+## License
+
+This work, as presented in the paper, is licensed under a [Creative Commons Attribution 4.0 International License (CC BY 4.0)](http://creativecommons.org/licenses/by/4.0/).
