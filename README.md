@@ -67,7 +67,7 @@ If you use CareerBERT or insights from our paper in your research, please cite:
   year = {2025},
   doi = {[https://doi.org/10.1016/j.eswa.2025.127043](https://doi.org/10.1016/j.eswa.2025.127043)},
   issn = {0957-4174}
-}
+}```
 
 ## Authors
 
